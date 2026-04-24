@@ -45,7 +45,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content login-modal" onClick={(e) => e.stopPropagation()}>
-        <h2>{isLogin ? '🔐 Acesso Jornalistas' : '📝 Cadastro de Jornalista'}</h2>
+        <h2>{isLogin ? 'Acesso Jornalistas' : 'Cadastro de Jornalista'}</h2>
         <form onSubmit={handleSubmit}>
           {!isLogin && (
             <>
@@ -90,7 +90,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
           </button>
         </form>
         <div className="demo-credentials">
-          <p>🔑 Demo: admin@blog.com / admin123</p>
+          <p>Demo: admin@blog.com / admin123</p>
         </div>
       </div>
     </div>
@@ -103,15 +103,15 @@ const Header = ({ currentView, setCurrentView, user, onLogout }) => {
     <header className="header">
       <div className="header-content">
         <div className="logo-area">
-          <span className="logo-icon">📰</span>
           <h1 className="logo">Blog do Esporte</h1>
+          <p className="logo-subtitle">Sua fonte de informações esportivas</p>
         </div>
         <nav>
           <button 
             className={`nav-btn ${currentView === 'home' ? 'active' : ''}`}
             onClick={() => setCurrentView('home')}
           >
-            🏠 Início
+            Início
           </button>
           {user ? (
             <>
@@ -119,23 +119,23 @@ const Header = ({ currentView, setCurrentView, user, onLogout }) => {
                 className={`nav-btn ${currentView === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setCurrentView('dashboard')}
               >
-                ✍️ Dashboard
+                Dashboard
               </button>
               <button 
                 className={`nav-btn ${currentView === 'new' ? 'active' : ''}`}
                 onClick={() => setCurrentView('new')}
               >
-                ➕ Nova Notícia
+                Nova Notícia
               </button>
               <div className="user-info">
-                <span className="user-avatar">👤</span>
-                <span>{user.profile?.nome || user.user_metadata?.nome || user.email}</span>
-                <button className="logout-btn" onClick={onLogout}>🚪 Sair</button>
+                <div className="user-avatar"></div>
+                <span className="user-name">{user.profile?.nome || user.user_metadata?.nome || user.email}</span>
+                <button className="logout-btn" onClick={onLogout}>Sair</button>
               </div>
             </>
           ) : (
             <button className="nav-btn login-btn" onClick={() => setCurrentView('login')}>
-              🔐 Área do Jornalista
+              Área do Jornalista
             </button>
           )}
         </nav>
@@ -146,12 +146,11 @@ const Header = ({ currentView, setCurrentView, user, onLogout }) => {
 
 // Componente NewsCard
 const NewsCard = ({ news, onEdit, onDelete, showActions = false }) => {
-  const categoria = news.categorias || { nome: 'outros', icone: '🏅', cor: '#9E9E9E' };
-
+  const categoria = news.categorias || { nome: 'outros', cor: '#9E9E9E' };
+  
   return (
     <div className="news-card">
       <div className="card-badge" style={{ backgroundColor: categoria.cor }}>
-        <span>{categoria.icone}</span>
         <span>{categoria.nome}</span>
       </div>
       
@@ -168,26 +167,23 @@ const NewsCard = ({ news, onEdit, onDelete, showActions = false }) => {
         
         <div className="card-meta">
           <div className="meta-info">
-            <span className="meta-icon">✍️</span>
             <span>{news.autor}</span>
           </div>
           <div className="meta-info">
-            <span className="meta-icon">📅</span>
             <span>{new Date(news.data_publicacao).toLocaleDateString('pt-BR')}</span>
           </div>
           <div className="meta-info">
-            <span className="meta-icon">👁️</span>
-            <span>{news.visualizacoes || 0} views</span>
+            <span>{news.visualizacoes || 0} visualizações</span>
           </div>
         </div>
         
         {showActions && (
           <div className="card-actions">
             <button className="action-btn edit" onClick={() => onEdit(news)}>
-              ✏️ Editar
+              Editar
             </button>
             <button className="action-btn delete" onClick={() => onDelete(news.id)}>
-              🗑️ Excluir
+              Excluir
             </button>
           </div>
         )}
@@ -203,15 +199,14 @@ const JournalistDashboard = ({ news, onEdit, onDelete, onPublish, loading }) => 
   const [stats, setStats] = useState({ total: 0, thisMonth: 0, totalViews: 0 });
 
   useEffect(() => {
+    const loadStats = async () => {
+      const result = await newsService.getStats();
+      if (result.success) {
+        setStats(result.data);
+      }
+    };
     loadStats();
   }, [news]);
-
-  const loadStats = async () => {
-    const result = await newsService.getStats();
-    if (result.success) {
-      setStats(result.data);
-    }
-  };
 
   const filteredNews = news.filter(n => {
     if (filter !== 'all' && n.categorias?.nome !== filter) return false;
@@ -229,29 +224,26 @@ const JournalistDashboard = ({ news, onEdit, onDelete, onPublish, loading }) => 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h2>📊 Painel do Jornalista</h2>
+        <h2>Painel do Jornalista</h2>
         <button className="btn-primary" onClick={onPublish}>
-          ➕ Nova Notícia
+          Nova Notícia
         </button>
       </div>
 
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon">📰</div>
           <div className="stat-info">
             <h3>{stats.total}</h3>
             <p>Total de notícias</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">📅</div>
           <div className="stat-info">
             <h3>{stats.thisMonth}</h3>
             <p>Notícias este mês</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon">👁️</div>
           <div className="stat-info">
             <h3>{stats.totalViews}</h3>
             <p>Total de visualizações</p>
@@ -263,7 +255,7 @@ const JournalistDashboard = ({ news, onEdit, onDelete, onPublish, loading }) => 
         <div className="search-box">
           <input
             type="text"
-            placeholder="🔍 Buscar notícias..."
+            placeholder="Buscar notícias por título ou autor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -274,35 +266,58 @@ const JournalistDashboard = ({ news, onEdit, onDelete, onPublish, loading }) => 
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="all">Todas categorias</option>
-          <option value="futebol">⚽ Futebol</option>
-          <option value="basquete">🏀 Basquete</option>
-          <option value="volei">🏐 Vôlei</option>
-          <option value="tenis">🎾 Tênis</option>
-          <option value="natação">🏊 Natação</option>
+          <option value="futebol">Futebol</option>
+          <option value="basquete">Basquete</option>
+          <option value="volei">Vôlei</option>
+          <option value="tenis">Tênis</option>
+          <option value="natação">Natação</option>
+          <option value="outros">Outros</option>
         </select>
       </div>
 
       <div className="news-list">
-        {filteredNews.map(item => (
-          <div key={item.id} className="news-list-item">
-            <div className="news-preview">
-              {item.imagem && <img src={item.imagem} alt={item.titulo} />}
-              <div className="news-preview-info">
-                <h4>{item.titulo}</h4>
-                <p>{item.resumo.substring(0, 100)}...</p>
-                <div className="news-meta">
-                  <span>{new Date(item.data_publicacao).toLocaleDateString('pt-BR')}</span>
-                  <span>👁️ {item.visualizacoes || 0} views</span>
-                  <span>✍️ {item.autor}</span>
+        {filteredNews.length === 0 ? (
+          <div className="empty-state">
+            <p>Nenhuma notícia encontrada</p>
+            <button className="btn-primary" onClick={onPublish}>
+              Criar primeira notícia
+            </button>
+          </div>
+        ) : (
+          filteredNews.map(item => (
+            <div key={item.id} className="news-list-item">
+              <div className="news-preview">
+                {item.imagem && <img src={item.imagem} alt={item.titulo} />}
+                <div className="news-preview-info">
+                  <h4>{item.titulo}</h4>
+                  <p>{item.resumo.substring(0, 100)}...</p>
+                  <div className="news-meta">
+                    <span>{new Date(item.data_publicacao).toLocaleDateString('pt-BR')}</span>
+                    <span>{item.visualizacoes || 0} visualizações</span>
+                    <span>{item.autor}</span>
+                    <span className="category-badge" style={{backgroundColor: item.categorias?.cor || '#999'}}>
+                      {item.categorias?.nome || 'Sem categoria'}
+                    </span>
+                  </div>
                 </div>
               </div>
+              <div className="news-list-actions">
+                <button 
+                  className="action-btn edit" 
+                  onClick={() => onEdit(item)}
+                >
+                  Editar
+                </button>
+                <button 
+                  className="action-btn delete" 
+                  onClick={() => onDelete(item.id)}
+                >
+                  Excluir
+                </button>
+              </div>
             </div>
-            <div className="news-list-actions">
-              <button className="icon-btn edit" onClick={() => onEdit(item)}>✏️</button>
-              <button className="icon-btn delete" onClick={() => onDelete(item.id)}>🗑️</button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
@@ -341,7 +356,7 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
   return (
     <form className="news-form" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label>Título da Notícia *</label>
+        <label>Título da Notícia</label>
         <input
           type="text"
           placeholder="Ex: Brasil vence campeonato mundial de futebol"
@@ -353,23 +368,23 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
 
       <div className="form-row">
         <div className="form-group">
-          <label>Categoria *</label>
+          <label>Categoria</label>
           <select
             value={formData.categoria}
             onChange={(e) => setFormData({...formData, categoria: e.target.value})}
             required
           >
-            <option value="futebol">⚽ Futebol</option>
-            <option value="basquete">🏀 Basquete</option>
-            <option value="volei">🏐 Vôlei</option>
-            <option value="tenis">🎾 Tênis</option>
-            <option value="natação">🏊 Natação</option>
-            <option value="outros">🏅 Outros</option>
+            <option value="futebol">Futebol</option>
+            <option value="basquete">Basquete</option>
+            <option value="volei">Vôlei</option>
+            <option value="tenis">Tênis</option>
+            <option value="natação">Natação</option>
+            <option value="outros">Outros</option>
           </select>
         </div>
 
         <div className="form-group">
-          <label>Autor *</label>
+          <label>Autor</label>
           <input
             type="text"
             placeholder="Seu nome"
@@ -381,7 +396,7 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
       </div>
 
       <div className="form-group">
-        <label>Resumo *</label>
+        <label>Resumo</label>
         <textarea
           placeholder="Escreva um resumo atraente da notícia (máximo 200 caracteres)"
           rows="3"
@@ -394,7 +409,7 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
       </div>
 
       <div className="form-group">
-        <label>Conteúdo Completo *</label>
+        <label>Conteúdo Completo</label>
         <textarea
           placeholder="Escreva a notícia completa aqui..."
           rows="8"
@@ -441,7 +456,7 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
               checked={formData.destaque}
               onChange={(e) => setFormData({...formData, destaque: e.target.checked})}
             />
-            🌟 Destacar como notícia principal
+            Destacar como notícia principal
           </label>
         </div>
       </div>
@@ -451,7 +466,7 @@ const NewsForm = ({ onSubmit, initialData, onCancel, loading }) => {
           Cancelar
         </button>
         <button type="submit" className="btn-submit" disabled={loading}>
-          {loading ? 'Salvando...' : (initialData ? '✏️ Atualizar Notícia' : '📝 Publicar Notícia')}
+          {loading ? 'Salvando...' : (initialData ? 'Atualizar Notícia' : 'Publicar Notícia')}
         </button>
       </div>
     </form>
@@ -504,11 +519,11 @@ function App() {
 
     if (result.success) {
       await loadNews();
-      alert(editingNews ? '✅ Notícia atualizada!' : '✅ Notícia publicada!');
+      alert(editingNews ? 'Notícia atualizada!' : 'Notícia publicada!');
       setEditingNews(null);
       setCurrentView('dashboard');
     } else {
-      alert('❌ Erro: ' + result.error);
+      alert('Erro: ' + result.error);
     }
   };
 
@@ -525,9 +540,9 @@ function App() {
 
       if (result.success) {
         await loadNews();
-        alert('🗑️ Notícia excluída!');
+        alert('Notícia excluída!');
       } else {
-        alert('❌ Erro ao excluir');
+        alert('Erro ao excluir');
       }
     }
   };
@@ -547,7 +562,15 @@ function App() {
     ? news 
     : news.filter(n => n.categorias?.nome === selectedCategoria);
 
-  const categorias = ['all', 'futebol', 'basquete', 'volei', 'tenis', 'natação'];
+  const categorias = [
+    { id: 'all', nome: 'Todas' },
+    { id: 'futebol', nome: 'Futebol' },
+    { id: 'basquete', nome: 'Basquete' },
+    { id: 'volei', nome: 'Vôlei' },
+    { id: 'tenis', nome: 'Tênis' },
+    { id: 'natação', nome: 'Natação' },
+    { id: 'outros', nome: 'Outros' }
+  ];
 
   if (loading && news.length === 0) {
     return <div className="loading-screen">Carregando Blog do Esporte...</div>;
@@ -567,7 +590,7 @@ function App() {
           <>
             {news.some(n => n.destaque) && (
               <div className="featured-section">
-                <h2>🌟 Em Destaque</h2>
+                <h2>Notícias em Destaque</h2>
                 <div className="featured-grid">
                   {news.filter(n => n.destaque).slice(0, 2).map(item => (
                     <div key={item.id} className="featured-card">
@@ -575,6 +598,10 @@ function App() {
                       <div className="featured-content">
                         <h3>{item.titulo}</h3>
                         <p>{item.resumo}</p>
+                        <div className="featured-meta">
+                          <span>{item.autor}</span>
+                          <span>{new Date(item.data_publicacao).toLocaleDateString('pt-BR')}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -585,23 +612,25 @@ function App() {
             <div className="categories-tabs">
               {categorias.map(cat => (
                 <button
-                  key={cat}
-                  className={`tab-btn ${selectedCategoria === cat ? 'active' : ''}`}
-                  onClick={() => setSelectedCategoria(cat)}
+                  key={cat.id}
+                  className={`tab-btn ${selectedCategoria === cat.id ? 'active' : ''}`}
+                  onClick={() => setSelectedCategoria(cat.id)}
                 >
-                  {cat === 'all' ? '📰 Todas' : 
-                   cat === 'futebol' ? '⚽ Futebol' :
-                   cat === 'basquete' ? '🏀 Basquete' :
-                   cat === 'volei' ? '🏐 Vôlei' :
-                   cat === 'tenis' ? '🎾 Tênis' : '🏊 Natação'}
+                  {cat.nome}
                 </button>
               ))}
             </div>
 
             <div className="news-grid">
-              {filteredNews.map(item => (
-                <NewsCard key={item.id} news={item} />
-              ))}
+              {filteredNews.length === 0 ? (
+                <div className="empty-state">
+                  <p>Nenhuma notícia encontrada nesta categoria.</p>
+                </div>
+              ) : (
+                filteredNews.map(item => (
+                  <NewsCard key={item.id} news={item} />
+                ))
+              )}
             </div>
           </>
         )}
@@ -622,11 +651,11 @@ function App() {
         {(currentView === 'new' || currentView === 'edit') && user && (
           <div className="form-container">
             <div className="form-header">
-              <h2>{editingNews ? '✏️ Editar Notícia' : '📝 Criar Nova Notícia'}</h2>
+              <h2>{editingNews ? 'Editar Notícia' : 'Criar Nova Notícia'}</h2>
               <button className="close-form" onClick={() => {
                 setCurrentView('dashboard');
                 setEditingNews(null);
-              }}>✕</button>
+              }}>×</button>
             </div>
             <NewsForm 
               onSubmit={handleSaveNews}
@@ -651,7 +680,7 @@ function App() {
 
       <footer className="footer">
         <div className="footer-content">
-          <p>📰 Blog do Esporte - Feito por jornalistas, para amantes do esporte</p>
+          <p>Blog do Esporte - Por jornalistas, para amantes do esporte</p>
           <p>© 2024 - Todos os direitos reservados</p>
         </div>
       </footer>

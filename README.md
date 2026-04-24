@@ -157,13 +157,11 @@ create table profiles (
 ## Prints da Aplicação
 
 ### Home (Listagem de Posts)
-print
+![alt text](image.png)
 ### Criar Post
-print
-### Detalhes do Post + Comentários
-print
+![alt text](image-1.png)
 ### Editar Post
-
+![alt text](image-2.png)
 ---
 
 ## Autores
